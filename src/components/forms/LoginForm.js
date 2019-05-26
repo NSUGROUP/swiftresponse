@@ -4,6 +4,11 @@ import Validator from 'validator';
 import InlineError from "../messages/InlineError";
 import PropTypes from 'prop-types';
 
+const users = {
+  "test@example.com": "test",
+  "another@example.com": "example"
+};
+
 class LoginForm extends React.Component{
 
     state = {
@@ -26,7 +31,6 @@ class LoginForm extends React.Component{
 
             if(Object.keys(errors).length === 0){
                 this.props.submit(this.state.data);
-
             }
 
     };
@@ -35,6 +39,14 @@ class LoginForm extends React.Component{
             const errors = {};
             if(!Validator.isEmail(data.email)) errors.email = "Not Valid Email";
             if(!data.password) errors.password ="Blanks are not Allowed";
+
+            // check if username & password are correct
+            if(!users[data.email]) {
+              errors.email = "Email Not Found";
+            } else if (users[data.email] !== data.password) {
+              errors.password = "Incorrect Password";
+            }
+
             return errors;
         }
 
@@ -44,11 +56,11 @@ class LoginForm extends React.Component{
             <Form onSubmit={this.onSubmit}>
                 <Form.Field error={!!errors.email}>
                     <label htmlfor="email">Email</label>
-                    
-                    <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
+
+                    <input
+                    type="email"
+                    id="email"
+                    name="email"
                     placeholder="email@email.com"
                     value={data.email}
                     onChange={this.onChange}
@@ -57,11 +69,11 @@ class LoginForm extends React.Component{
                 </Form.Field >
                 <Form.Field error={!!errors.password}>
                     <label htmlfor="password">Password</label>
-                    
-                    <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
+
+                    <input
+                    type="password"
+                    id="password"
+                    name="password"
                     placeholder="Secure Password"
                     value={data.password}
                     onChange={this.onChange}
